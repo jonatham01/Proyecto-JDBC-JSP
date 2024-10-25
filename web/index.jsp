@@ -3,6 +3,7 @@
 <%@page import="java.util.ArrayList" %>
 <%@page import="java.util.List" %>
 <%@page import="servicio.categoriaHabitacionServicio" %>
+<%@page import="dto.CategoriaHabitacionDTO" %>
 <!DOCTYPE html>
 <!DOCTYPE html>
 <html lang="en">
@@ -61,9 +62,23 @@
                 <input type="number" name="precio" id="precio" placeholder="Ingrese valor">
                 <label for="url">Enlace url de la foto:</label>
                 <input type="url" name="url" id="url" placeholder="Ingrese url">
+                 <input type="hidden" name="accion" value="enviarFormulario">
                 <button type="submit"> Crear</button>
             </form>
-
+            
+            <%
+                String nombre = request.getParameter("nombre");
+                String fotoUrl = request.getParameter("url");
+                String accion = request.getParameter("accion");
+                if ("enviarFormulario".equals(accion)) {
+                    if (nombre != null && request.getParameter("precio") != null && fotoUrl != null){
+                        double precio = Double.parseDouble(request.getParameter("precio"));
+                        categoriaHabitacionServicio servicio = new categoriaHabitacionServicio();
+                        servicio.crearCategoriaHabitacion(new CategoriaHabitacionDTO(nombre,precio,fotoUrl));
+                    }
+                }
+                
+             %>
             <div class="listado">
                 <div class="consulta"></div>
 
@@ -72,7 +87,7 @@
                         <th>Nombre</th>
                         <th>Precio por noche</th>
                         <th>Url de la foto</th>
-                        <<th>Modificar</th>
+                        <th>Modificar</th>
                     </tr>
                     <%
                         categoriaHabitacionServicio servicio = new categoriaHabitacionServicio();
@@ -86,7 +101,7 @@
                                     <td><%= data.getNombre() %></td>
                                     <td><%= data.getPrecioNoche() %></td>
                                     <td><%= data.getFotoUrl() %></td>
-                                    <<td> editar</td>
+                                    <td> editar</td>
                                 </tr>
                     <%
                             }

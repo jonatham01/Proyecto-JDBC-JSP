@@ -28,10 +28,8 @@ public class categoriaHabitacionServicio {
         try {
            conexion = conexionSQL.conectar();
            statement = conexion.prepareStatement(sql);
-           
            ResultSet resultado = statement.executeQuery();
-           statement.close();
-           conexionSQL.desconectar();
+           
            List<CategoriaHabitacion> categorias = new ArrayList<>();
            while(resultado.next()){
                
@@ -40,9 +38,13 @@ public class categoriaHabitacionServicio {
                         resultado.getInt("id_categoria_habitacion"),
                         resultado.getString("nombre"),
                         resultado.getDouble("precio_noche"),
-                         resultado.getString("foto_url")
+                        resultado.getString("foto_url")
                ));
+               System.out.println(resultado.getInt("id_categoria_habitacion"));
             }
+           conexionSQL.desconectar();
+           statement.close();
+
            return categorias;
            
         } catch (SQLException ex) {
@@ -139,5 +141,10 @@ public class categoriaHabitacionServicio {
        }
        return false;        
     }
+   
+   public static void main(String[] args){
+       categoriaHabitacionServicio service = new categoriaHabitacionServicio();
+       System.out.println(service.mostarCategoriaHabitaciones().toString());
+   }
     
 }

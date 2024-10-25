@@ -20,6 +20,7 @@ public class MostrarCategoriasServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         categoriaHabitacionServicio servicio = new categoriaHabitacionServicio();
         List<CategoriaHabitacion> categorias = servicio.mostarCategoriaHabitaciones();
+        //System.out.println(categorias.get(0).getNombre());
         
         String categoriasJson = gson.toJson(categorias);
         response.setContentType("application/json");
