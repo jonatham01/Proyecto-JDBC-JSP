@@ -20,8 +20,8 @@ public class CamaHabitacionServicio {
     private Conexion conexionSQL;
     Connection conexion;
 
-    public CamaHabitacionServicio(Conexion conexion) {
-        this.conexionSQL = conexion;
+    public CamaHabitacionServicio() {
+        this.conexionSQL = new Conexion();
     }
     
     

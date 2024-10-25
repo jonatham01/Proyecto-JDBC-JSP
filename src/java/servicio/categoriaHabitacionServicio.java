@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.ResultSet;
 import dto.CategoriaHabitacionDTO;
 import entidad.CategoriaHabitacion;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,6 +22,34 @@ public class categoriaHabitacionServicio {
     public categoriaHabitacionServicio() {
         this.conexionSQL = new Conexion();
     }
+    
+    public List<CategoriaHabitacion> mostarCategoriaHabitaciones(){
+        String sql = "SELECT * FROM CATEGORIA_HABITACION ";
+        try {
+           conexion = conexionSQL.conectar();
+           statement = conexion.prepareStatement(sql);
+           
+           ResultSet resultado = statement.executeQuery();
+           statement.close();
+           conexionSQL.desconectar();
+           List<CategoriaHabitacion> categorias = new ArrayList<>();
+           while(resultado.next()){
+               
+               categorias.add( 
+                new CategoriaHabitacion(
+                        resultado.getInt("id_categoria_habitacion"),
+                        resultado.getString("nombre"),
+                        resultado.getDouble("precio_noche"),
+                         resultado.getString("foto_url")
+               ));
+            }
+           return categorias;
+           
+        } catch (SQLException ex) {
+           Logger.getLogger(categoriaHabitacionServicio.class.getName()).log(Level.SEVERE, null, ex);
+       }
+       return null;
+   }
    
    public CategoriaHabitacion mostarCategoriaHabitacion(int id){
         String sql = "SELECT * FROM CATEGORIA_HABITACION WHERE ID_CATEGORIA_HABITACION = ?";
@@ -45,8 +75,9 @@ public class categoriaHabitacionServicio {
        return null;
    }
    
-   public CategoriaHabitacion crearCategoriaHabitacion(Connection conexion, CategoriaHabitacionDTO dto){
+   public CategoriaHabitacion crearCategoriaHabitacion( CategoriaHabitacionDTO dto){
        String sql = "INSERT INTO CATEGORIA_HABITACION(nombre,precio_noche,foto_url) VALUES(?,?,?)";
+       conexion = conexionSQL.conectar();
        try {
            conexion = conexionSQL.conectar();
            statement = conexion.prepareStatement(sql);

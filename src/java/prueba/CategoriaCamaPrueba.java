@@ -1,6 +1,7 @@
 
 package prueba;
 import entidad.CategoriaCama;
+import java.util.List;
 import servicio.CategoriaCamaServicio;
 
 public class CategoriaCamaPrueba {
@@ -39,7 +40,15 @@ public class CategoriaCamaPrueba {
         System.out.println("MEDIDAS: " + categoria.getMedidas() );
         System.out.println("IMAGEN URL: " + categoria.getFotoUrl());
         //borrar categoriaCama
-        System.out.println(servicio.eliminarCategoriaCama(categoria.getIdCategoriaCama()));
+        
+        
+       List<CategoriaCama> listado = servicio.mostrarCategoriaCamas();
+       listado.forEach((CategoriaCama data) -> {
+           System.out.print(data.toString());
+        });
+       
+       System.out.println(servicio.eliminarCategoriaCama(categoria.getIdCategoriaCama()));
     }
+    
     
 }

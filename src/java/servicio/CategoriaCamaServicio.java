@@ -5,6 +5,8 @@ import conexion.Conexion;
 import java.sql.Connection;
 import entidad.CategoriaCama;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CategoriaCamaServicio {
     PreparedStatement pst;
@@ -75,6 +77,32 @@ public class CategoriaCamaServicio {
             return null;
         } 
         return categoriaCama;
+    }
+    
+    
+    public List<CategoriaCama> mostrarCategoriaCamas() {
+        CategoriaCama categoriaCama;
+        String sql = "SELECT * FROM categoria_cama "; 
+        try {
+            conexion = conexionSQL.conectar();
+            PreparedStatement ps = conexion.prepareStatement(sql); 
+            ResultSet rs = ps.executeQuery(); 
+             List<CategoriaCama> categoriaCamas = new ArrayList<>();
+           while(rs.next()){              
+                int idCategoriaCama = rs.getInt("id_categoria_cama");
+                String tipo = rs.getString("tipo");
+                String medidas = rs.getString("medidas");
+                String fotoUrl = rs.getString("foto_url");
+                String color = rs.getString("color");
+                categoriaCama = new CategoriaCama(idCategoriaCama, tipo, medidas, fotoUrl, color);
+                categoriaCamas.add(categoriaCama);
+                conexionSQL.desconectar();
+                return categoriaCamas;
+            }
+           return categoriaCamas;
+        } catch (SQLException e) {
+            return null;
+        } 
     }
     
     public CategoriaCama modificarCategoriaCama( CategoriaCama entidad,int id){
