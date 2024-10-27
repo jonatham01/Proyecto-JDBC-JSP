@@ -60,16 +60,20 @@ public class categoriaHabitacionServicio {
            statement = conexion.prepareStatement(sql);
            statement.setInt(1,id);
            ResultSet resultado = statement.executeQuery();
-           statement.close();
-           conexionSQL.desconectar();
+           
+           CategoriaHabitacion categoria = null;
            if(resultado.next()){
-                return new CategoriaHabitacion(
+                categoria = new CategoriaHabitacion(
                         resultado.getInt("id_categoria_habitacion"),
                         resultado.getString("nombre"),
                         resultado.getDouble("precio_noche"),
-                         resultado.getString("foto_url")
+                        resultado.getString("foto_url")
                 );
             }
+           statement.close();
+           conexionSQL.desconectar();
+           return categoria;
+           
            
         } catch (SQLException ex) {
            Logger.getLogger(categoriaHabitacionServicio.class.getName()).log(Level.SEVERE, null, ex);

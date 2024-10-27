@@ -1,3 +1,4 @@
+<%@page import="java.lang.Integer"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="entidad.CategoriaHabitacion" %>
 <%@page import="java.util.ArrayList" %>
@@ -56,17 +57,23 @@
         
         <div class="content">
             <form action="">
+                <input type="hidden" name="idCategoriaHabitacion" id="id" >
                 <label for="nombre">Nombre</label>
-                <input type="text" name="nombre" id="nombre" placeholder="Ingrese el nombre de la categoria">
+                <input type="text" name="nombre" id="nombre" placeholder="Ingrese el nombre de la categoria" required>
                 <label for="precio">Precio por noche:</label>
-                <input type="number" name="precio" id="precio" placeholder="Ingrese valor">
-                <label for="url">Enlace url de la foto:</label>
-                <input type="url" name="url" id="url" placeholder="Ingrese url">
-                 <input type="hidden" name="accion" value="enviarFormulario">
-                <button type="submit"> Crear</button>
+                <input type="number" name="precio" id="precio" placeholder="Ingrese valor" required>
+                <label for="url" >Enlace url de la foto:</label>
+                <input type="url" name="url" id="url" placeholder="Ingrese url" required>
+                <input type="hidden" name="accion" id="accion" value="enviarFormulario">
+                <button type="submit" id="boton" name="boton"> Crear</button>
             </form>
             
             <%
+                String idCategoriaParam = request.getParameter("idCategoriaHabitacion");
+                int idEditar = -1;
+                if( idCategoriaParam != null  && !idCategoriaParam.isEmpty()){
+                    idEditar = Integer.parseInt(request.getParameter("idCategoriaHabitacion"));
+                }
                 String nombre = request.getParameter("nombre");
                 String fotoUrl = request.getParameter("url");
                 String accion = request.getParameter("accion");
@@ -75,8 +82,28 @@
                         double precio = Double.parseDouble(request.getParameter("precio"));
                         categoriaHabitacionServicio servicio = new categoriaHabitacionServicio();
                         servicio.crearCategoriaHabitacion(new CategoriaHabitacionDTO(nombre,precio,fotoUrl));
+                        out.println("<script>");
+                            out.println("document.getElementById('nombre').value = '';");
+                            out.println("document.getElementById('precio').value = '';");
+                            out.println("document.getElementById('url').value = '';");
+                            out.println("document.getElementById('accion').value = 'enviarFormulario';");
+                        out.println("</script>");
                     }
                 }
+                else if("editarFormulario".equals(accion) && idEditar  != -1){
+                    
+                    if (nombre != null && request.getParameter("precio") != null && fotoUrl != null){
+                        double precio = Double.parseDouble(request.getParameter("precio"));
+                        categoriaHabitacionServicio servicio = new categoriaHabitacionServicio();
+                        servicio.modificarCategoriaHabitacion(new CategoriaHabitacionDTO(nombre,precio,fotoUrl), idEditar);
+                        out.println("<script>");
+                            out.println("document.getElementById('nombre').value = '';");
+                            out.println("document.getElementById('precio').value = '';");
+                            out.println("document.getElementById('url').value = '';");
+                            out.println("document.getElementById('accion').value = 'enviarFormulario';");
+                        out.println("</script>");
+                }
+                    }
                 
              %>
             <div class="listado">
@@ -101,7 +128,46 @@
                                     <td><%= data.getNombre() %></td>
                                     <td><%= data.getPrecioNoche() %></td>
                                     <td><%= data.getFotoUrl() %></td>
-                                    <td> editar</td>
+                                    <td> 
+                                        <form action="">
+                                            <input type="hidden" name=<%= data.getIdCategoriaHabitacion() %> value="enviarFormulario">
+                                            <button type="submit">Editar</button>
+                                            <%
+                                                String accionEditar;
+                                                accionEditar = request.getParameter(String.valueOf(data.getIdCategoriaHabitacion()));
+                                                
+                                                if ("enviarFormulario".equals(accionEditar)) {
+                                                    
+                                                    CategoriaHabitacion itemEditar = servicio.mostarCategoriaHabitacion(data.getIdCategoriaHabitacion());
+                                                    if (itemEditar != null) {
+                                                            
+                                                            // Asignar valores de la categoría a los campos del formulario
+                                                            int id = itemEditar.getIdCategoriaHabitacion();
+                                                            String nombreEditar = itemEditar.getNombre();
+                                                            double precioEditar = itemEditar.getPrecioNoche();
+                                                            String fotoUrlEditar = itemEditar.getFotoUrl();
+                                                            
+
+                                                            // Cargar los datos en el formulario
+                                                            out.println("<script>");
+                                                            out.println("document.getElementById('nombre').value = '" + nombreEditar + "';");
+                                                            out.println("document.getElementById('precio').value = '" + precioEditar + "';");
+                                                            out.println("document.getElementById('url').value = '" + fotoUrlEditar + "';");
+                                                            //out.println("document.getElementById('boton').textContent = '" + "editar / crear" + "';");
+                                                            out.println("document.getElementsByName('accion')[0].value = 'editarFormulario';");
+                                                            out.println("document.getElementsByName('idCategoriaHabitacion')[0].value = " + id + ";");
+                                                            
+                                                            out.println("</script>");
+                                                            //out.println("<p>" + id + "</p>");
+                                                      
+                                                    }
+
+                                                }
+
+                                            %>
+                                        </form>
+                                        
+                                    </td>
                                 </tr>
                     <%
                             }
